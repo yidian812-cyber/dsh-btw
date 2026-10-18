@@ -1,0 +1,6 @@
+{
+  "meta": {
+    "title": "By The Way",
+    "description": "A read-only side channel that borrows the right column: open it and the main conversation gives way, close it and the column returns. It sees the current session snapshot but never writes to it and cannot call tools."
+  }
+}

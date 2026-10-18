@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" role="img" aria-label="By The Way">
+  <rect x="6" y="10" width="40" height="28" rx="9" fill="#4d6bfe"/>
+  <path d="M16 38h12l-7 9z" fill="#4d6bfe"/>
+  <rect x="24" y="26" width="34" height="24" rx="8" fill="#ffffff" stroke="#4d6bfe" stroke-width="3"/>
+  <path d="M46 50h-10l6 8z" fill="#ffffff" stroke="#4d6bfe" stroke-width="3" stroke-linejoin="round"/>
+  <circle cx="35" cy="38" r="2.4" fill="#4d6bfe"/>
+  <circle cx="42" cy="38" r="2.4" fill="#4d6bfe"/>
+  <circle cx="49" cy="38" r="2.4" fill="#4d6bfe"/>
+</svg>
