@@ -112,11 +112,12 @@ icon.svg          插件图标
 
 ## 开发
 
-无构建、无依赖：两个原生 ESM 文件。CI 只做语法检查和 `npm pack --dry-run`。
+无构建、无依赖：两个原生 ESM 文件。CI 做语法检查、客户端模块冒烟测试和 `npm pack --dry-run`。
 
 ```bash
 node --check index.js
 node --check client.js
+node test/smoke-client.cjs   # 模块 id / inject / locale 字典 / 两个 slot 注册
 npm pack --dry-run
 ```
 

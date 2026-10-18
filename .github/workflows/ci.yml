@@ -17,5 +17,7 @@ jobs:
         run: node --check index.js
       - name: Parse client half
         run: node --check client.js
+      - name: Smoke-test client module
+        run: node test/smoke-client.cjs
       - name: Validate package payload
         run: npm pack --dry-run
