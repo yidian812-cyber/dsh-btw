@@ -4,7 +4,9 @@
 
 主对话还在跑、还在等工具的时候，你想顺口问一句「它现在在做什么」「刚才那个报错什么原因」，又不想打断它、更不想把这段问答塞进主对话的上下文——按一下「旁路」，在右边问，答案流式返回，主对话不受任何影响。
 
-> A read-only side channel for DeepSeek Harness: ask questions in a docked right-hand panel while the main conversation keeps running. It never writes to the session and cannot call tools.
+这个交互仿照 Claude Code 的 `/btw` 功能：主任务继续运行时插一句话，不打断它，也不进入主对话历史。这里把它做成了 DSH 的右侧停靠面板。
+
+> A read-only side channel for DeepSeek Harness: ask questions in a docked right-hand panel while the main conversation keeps running. It never writes to the session and cannot call tools. Inspired by Claude Code's `/btw`.
 
 ## 它不做什么
 
@@ -18,12 +20,11 @@
 
 | 来源 | 目标 |
 | --- | --- |
-| Git 仓库 | `git+https://github.com/yidian812-cyber/dsh-btw.git` |
+| Git 仓库（推荐） | `git+https://github.com/yidian812-cyber/dsh-btw.git` |
 | 本地目录 | 本仓库根目录 |
 | `npm pack` 产物 | `yidian812-cyber-dsh-btw-0.1.0.tgz` |
-| npm | `@yidian812-cyber/dsh-btw@^0.1.0`（尚未发布） |
 
-> 包名带作者 scope：npm 上的 `dsh-btw` 已被另一位作者的插件占用，本项目发布到 `@yidian812-cyber/dsh-btw`。
+> 本项目不发布到 npm；包名带 scope（`@yidian812-cyber/dsh-btw`）是因为 npm 上的 `dsh-btw` 已被另一位作者的插件占用，留着 scope 可以避免两者混在一起。
 
 也可以走命令行（底层同样是把包装进 profile 并登记进 bundle 层）：
 
