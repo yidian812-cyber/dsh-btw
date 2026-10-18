@@ -28,6 +28,69 @@ window.__ModuleLoader__.load({
     const MIN_WIDTH = 280;
     const MAX_WIDTH = 820;
 
+    // ------------------------------------------------------------ 文案
+
+    const NS = 'dsh-btw';
+    const ZH = {
+      'toggle.label': '旁路',
+      'toggle.title': '旁路问答（/btw）：不打断当前对话的只读提问',
+      'toggle.aria': '旁路问答',
+      'panel.title': '旁路问答',
+      'panel.subtitle': '只读 · 记录按会话保留',
+      'panel.clear': '清空',
+      'panel.clearTitle': '清空这段问答记录',
+      'panel.close': '关闭',
+      'panel.closeAria': '关闭旁路问答',
+      'panel.resizerAria': '拖动调整旁路宽度',
+      'panel.resizerTitle': '拖动调整宽度',
+      'panel.placeholder': '在这里提问，回车发送，Shift+回车换行…',
+      'panel.hint': 'Enter 发送 · 拖左边缘调宽',
+      'panel.send': '发送',
+      'panel.stop': '停止',
+      'panel.thinking': '思考中…',
+      'empty.title': '主对话照常运行，这里不会打断它。',
+      'empty.snapshot': '它能读到当前会话的快照，但不能改任何东西，也不能调用工具。',
+      'empty.kept': '关掉面板再打开，这段问答还在。',
+      'error.noSession': '找不到可读的会话：请先打开一个会话再问',
+      'error.noStream': '当前环境不支持流式响应',
+      'error.generic': '生成失败',
+      'error.http': 'HTTP {status}',
+    };
+    const EN = {
+      'toggle.label': 'Aside',
+      'toggle.title': 'By-the-way questions (/btw): read-only, without interrupting this conversation',
+      'toggle.aria': 'By-the-way Q&A',
+      'panel.title': 'By the way',
+      'panel.subtitle': 'Read-only · kept per session',
+      'panel.clear': 'Clear',
+      'panel.clearTitle': 'Clear this by-the-way thread',
+      'panel.close': 'Close',
+      'panel.closeAria': 'Close the by-the-way panel',
+      'panel.resizerAria': 'Drag to resize the panel',
+      'panel.resizerTitle': 'Drag to resize',
+      'panel.placeholder': 'Ask here — Enter to send, Shift+Enter for a new line…',
+      'panel.hint': 'Enter to send · drag the left edge to resize',
+      'panel.send': 'Send',
+      'panel.stop': 'Stop',
+      'panel.thinking': 'Thinking…',
+      'empty.title': 'The main conversation keeps running; this never interrupts it.',
+      'empty.snapshot': 'It reads a snapshot of this session, but cannot change anything or call tools.',
+      'empty.kept': 'Close the panel and reopen it — this thread is still here.',
+      'error.noSession': 'No readable session: open a conversation first.',
+      'error.noStream': 'Streaming is not supported in this environment.',
+      'error.generic': 'Generation failed',
+      'error.http': 'HTTP {status}',
+    };
+
+    /** 生效中的翻译函数；apply 注册字典后换成 locale 绑定，注册前退回中文。 */
+    let t = function (key, params) {
+      const template = ZH[key] ?? key;
+      if (!params) return template;
+      return template.replace(/\{(\w+)\}/g, function (match, name) {
+        return name in params ? String(params[name]) : match;
+      });
+    };
+
     // ------------------------------------------------------------ 极简 store
 
     let state = {
@@ -249,7 +312,7 @@ window.__ModuleLoader__.load({
       let bound = sessionId || state.sessionId || '';
       if (!bound) bound = await resolveSessionId('');
       if (!bound) {
-        setState({ error: '找不到可读的会话：请先打开一个会话再问' });
+        setState({ error: t('error.noSession') });
         return;
       }
       if (state.turns.length === 0) {
@@ -282,7 +345,7 @@ window.__ModuleLoader__.load({
           signal: local.signal,
         });
         if (!response.ok) {
-          let message = 'HTTP ' + response.status;
+          let message = t('error.http', { status: response.status });
           try {
             const payload = await response.json();
             if (payload && typeof payload.error === 'string') message = payload.error;
@@ -292,7 +355,7 @@ window.__ModuleLoader__.load({
           throw new Error(message);
         }
         if (!response.body || typeof response.body.getReader !== 'function') {
-          throw new Error('当前环境不支持流式响应');
+          throw new Error(t('error.noStream'));
         }
 
         const reader = response.body.getReader();
@@ -323,7 +386,7 @@ window.__ModuleLoader__.load({
                 answer += event.text;
                 setState({ turns: patchLast(state.turns, answer, true) });
               } else if (event.type === 'error') {
-                failure = typeof event.message === 'string' ? event.message : '生成失败';
+                failure = typeof event.message === 'string' ? event.message : t('error.generic');
               }
             }
             split = buffer.indexOf('\n\n');
@@ -436,6 +499,8 @@ window.__ModuleLoader__.load({
       'display:flex;flex-direction:column;pointer-events:auto;z-index:30;font-family:inherit;font-size:13px;',
       'color:var(--dsw-alias-label-primary);background:var(--dsw-specific-sidebar-fill);',
       'border-left:1px solid var(--dsw-alias-border-l1);}',
+      '.dsh-btw-root.is-floating{position:fixed;top:0;bottom:0;right:0;z-index:120;',
+      'box-shadow:-14px 0 32px rgba(0,0,0,.22);}',
       '.dsh-btw-resizer{position:absolute;left:-3px;top:0;bottom:0;width:8px;cursor:ew-resize;z-index:2;',
       'background:transparent;border:none;padding:0;}',
       '.dsh-btw-resizer:hover{background:var(--dsw-alias-border-l2);opacity:.45;}',
@@ -540,8 +605,8 @@ window.__ModuleLoader__.load({
             key: 'toggle',
             type: 'button',
             className: 'dsh-btw-toggle' + (active ? ' is-active' : ''),
-            title: '旁路问答（/btw）：不打断当前对话的只读提问',
-            'aria-label': '旁路问答',
+            title: t('toggle.title'),
+            'aria-label': t('toggle.aria'),
             'aria-pressed': active,
             onClick: function () {
               if (active) closePanel();
@@ -549,7 +614,7 @@ window.__ModuleLoader__.load({
             },
           },
           icon(14),
-          h('span', null, '旁路'),
+          h('span', null, t('toggle.label')),
         ),
       );
     }
@@ -562,6 +627,8 @@ window.__ModuleLoader__.load({
       const [dragging, setDragging] = React.useState(false);
       const listRef = React.useRef(null);
       const inputRef = React.useRef(null);
+      const rootRef = React.useRef(null);
+      const [floating, setFloating] = React.useState(false);
       const widthRef = React.useRef(snapshot.width);
       widthRef.current = snapshot.width;
 
@@ -584,6 +651,37 @@ window.__ModuleLoader__.load({
           if (element) element.scrollTop = element.scrollHeight;
         },
         [snapshot.turns, snapshot.open],
+      );
+
+      // 让位兜底：宿主改类名 / 改 DOM 后，面板可能被挤出可视区或被压成 0 尺寸。
+      // 一旦量到这种几何，就切到 fixed 浮层 —— 宁可盖住内容，也别整块消失。
+      React.useLayoutEffect(
+        function () {
+          if (!snapshot.open) return undefined;
+          let frame = 0;
+          function measure() {
+            frame = 0;
+            const element = rootRef.current;
+            if (element === null) return;
+            const rect = element.getBoundingClientRect();
+            const broken =
+              rect.width < 80 ||
+              rect.height < 120 ||
+              rect.right <= 0 ||
+              rect.left >= window.innerWidth ||
+              rect.bottom <= 0 ||
+              rect.top >= window.innerHeight;
+            setFloating(broken);
+          }
+          measure();
+          frame = window.requestAnimationFrame(measure);
+          window.addEventListener('resize', measure);
+          return function () {
+            if (frame !== 0) window.cancelAnimationFrame(frame);
+            window.removeEventListener('resize', measure);
+          };
+        },
+        [snapshot.open, snapshot.width],
       );
 
       if (!snapshot.open) return null;
@@ -632,7 +730,7 @@ window.__ModuleLoader__.load({
         if (turn.text !== '') children.push(turn.text);
         if (!isUser && pending) {
           if (turn.text === '') {
-            children.push(h('span', { key: 'wait', className: 'dsh-btw-thinking' }, '思考中…'));
+            children.push(h('span', { key: 'wait', className: 'dsh-btw-thinking' }, t('panel.thinking')));
           } else {
             children.push(h('span', { key: 'caret', className: 'dsh-btw-caret' }));
           }
@@ -649,9 +747,9 @@ window.__ModuleLoader__.load({
           ? h(
               'div',
               { className: 'dsh-btw-empty' },
-              h('strong', null, '主对话照常运行，这里不会打断它。'),
-              h('div', null, '它能读到当前会话的快照，但不能改任何东西，也不能调用工具。'),
-              h('div', { style: { marginTop: '8px', opacity: 0.8 } }, '关掉面板再打开，这段问答还在。'),
+              h('strong', null, t('empty.title')),
+              h('div', null, t('empty.snapshot')),
+              h('div', { style: { marginTop: '8px', opacity: 0.8 } }, t('empty.kept')),
             )
           : rows;
 
@@ -661,12 +759,17 @@ window.__ModuleLoader__.load({
         h('style', { key: 'style' }, CSS + reserveCss(width)),
         h(
           'div',
-          { className: 'dsh-btw-root dsh-btw-reserve', key: 'panel', style: { width: width + 'px' } },
+          {
+            ref: rootRef,
+            className: 'dsh-btw-root dsh-btw-reserve' + (floating ? ' is-floating' : ''),
+            key: 'panel',
+            style: { width: width + 'px' },
+          },
           h('button', {
             type: 'button',
             className: 'dsh-btw-resizer',
-            'aria-label': '拖动调整旁路宽度',
-            title: '拖动调整宽度',
+            'aria-label': t('panel.resizerAria'),
+            title: t('panel.resizerTitle'),
             'data-dragging': dragging || undefined,
             onPointerDown: beginResize,
           }),
@@ -674,16 +777,22 @@ window.__ModuleLoader__.load({
             'div',
             { className: 'dsh-btw-head' },
             icon(13),
-            h('div', { className: 'dsh-btw-title' }, '旁路问答'),
-            h('div', { className: 'dsh-btw-sub' }, '只读 · 记录按会话保留'),
+            h('div', { className: 'dsh-btw-title' }, t('panel.title')),
+            h('div', { className: 'dsh-btw-sub' }, t('panel.subtitle')),
             h(
               'button',
-              { type: 'button', className: 'dsh-btw-clearthread', title: '清空这段问答记录', onClick: clearThread },
-              '清空',
+              { type: 'button', className: 'dsh-btw-clearthread', title: t('panel.clearTitle'), onClick: clearThread },
+              t('panel.clear'),
             ),
             h(
               'button',
-              { type: 'button', className: 'dsh-btw-close', title: '关闭', 'aria-label': '关闭旁路问答', onClick: closePanel },
+              {
+                type: 'button',
+                className: 'dsh-btw-close',
+                title: t('panel.close'),
+                'aria-label': t('panel.closeAria'),
+                onClick: closePanel,
+              },
               '×',
             ),
           ),
@@ -697,7 +806,7 @@ window.__ModuleLoader__.load({
               className: 'dsh-btw-input',
               rows: 3,
               value: draft,
-              placeholder: '在这里提问，回车发送，Shift+回车换行…',
+              placeholder: t('panel.placeholder'),
               onChange: function (event) {
                 setDraft(event.target.value);
               },
@@ -706,13 +815,13 @@ window.__ModuleLoader__.load({
             h(
               'div',
               { className: 'dsh-btw-actions' },
-              h('div', { className: 'dsh-btw-hint' }, 'Enter 发送 · 拖左边缘调宽'),
+              h('div', { className: 'dsh-btw-hint' }, t('panel.hint')),
               streaming
-                ? h('button', { type: 'button', className: 'dsh-btw-send is-stop', onClick: stopStreaming }, '停止')
+                ? h('button', { type: 'button', className: 'dsh-btw-send is-stop', onClick: stopStreaming }, t('panel.stop'))
                 : h(
                     'button',
                     { type: 'button', className: 'dsh-btw-send', disabled: draft.trim() === '', onClick: submit },
-                    '发送',
+                    t('panel.send'),
                   ),
             ),
           ),
@@ -723,8 +832,21 @@ window.__ModuleLoader__.load({
     // ------------------------------------------------------------ 注册
 
     return {
-      inject: ['slots'],
+      inject: ['slots', 'locale'],
       apply(ctx) {
+        let bound = null;
+        try {
+          ctx.effect(
+            () => ctx.locale.register(NS, { zh: ZH, en: EN }),
+            'dsh-btw: locale dictionaries',
+          );
+          if (typeof ctx.locale.bind === 'function') bound = ctx.locale.bind(NS);
+        } catch (error) {
+          /* 宿主没有 locale 服务或命名空间被占：退回内置中文，不影响面板本身 */
+          bound = null;
+        }
+        if (bound !== null) t = bound;
+
         ctx.slots.inject('shell.overlay', function () {
           return ctx.slots.register({ name: 'shell.overlay', id: 'dsh-btw-panel', order: 900 }, function () {
             return h(BtwPanel, {});
