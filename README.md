@@ -14,16 +14,18 @@
 
 ## 安装
 
-这是一个标准的 DSH bundle 包（`package.json` 里声明了 `dsh.bundle.patch`，并带一个 Web 客户端半侧）。用你平时装插件的方式装它即可：
+这是一个标准的 DSH bundle 包（`package.json` 里声明了 `dsh.bundle.patch`，并带一个 Web 客户端半侧）。在插件管理的「安装 bundle」里指向下面任一来源即可：
 
-1. **插件管理里安装 bundle**：指向本包（npm 包名 `dsh-btw`，或本仓库目录、`npm pack` 产物）。
-2. 安装后无需重启前端；如果页面已经开着，刷新一次拿到客户端模块。
+| 来源 | 目标 |
+| --- | --- |
+| Git 仓库 | `git+https://github.com/yidian812-cyber/dsh-btw.git` |
+| 本地目录 | 本仓库根目录 |
+| `npm pack` 产物 | `dsh-btw-0.1.0.tgz` |
+| npm | `@yidian812-cyber/dsh-btw@^0.1.0`（尚未发布） |
 
-发布到 npm 之后，依赖写法与其他插件一致：
+> 包名带作者 scope：npm 上的 `dsh-btw` 已被另一位作者的插件占用，本项目发布到 `@yidian812-cyber/dsh-btw`。
 
-```json
-{ "dependencies": { "dsh-btw": "^0.1.0" } }
-```
+装好后无需重启前端；如果页面已经开着，刷新一次拿到客户端模块。
 
 ## 用法
 

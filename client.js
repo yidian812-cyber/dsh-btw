@@ -14,7 +14,7 @@
  */
 
 window.__ModuleLoader__.load({
-  id: 'dsh-btw',
+  id: '@yidian812-cyber/dsh-btw',
   factory(require) {
     const React = require('react');
     const h = React.createElement;

@@ -1,5 +1,5 @@
 {
-  "name": "dsh-btw",
+  "name": "@yidian812-cyber/dsh-btw",
   "version": "0.1.0",
   "description": "旁路问答（/btw）：给 DeepSeek Harness 加一个只读的右侧问答面板，主对话继续运行时不被打断，也不写入会话。",
   "license": "MIT",
