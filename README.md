@@ -25,7 +25,13 @@
 
 > 包名带作者 scope：npm 上的 `dsh-btw` 已被另一位作者的插件占用，本项目发布到 `@yidian812-cyber/dsh-btw`。
 
-装好后无需重启前端；如果页面已经开着，刷新一次拿到客户端模块。
+也可以走命令行（底层同样是把包装进 profile 并登记进 bundle 层）：
+
+```bash
+dsh plugin --profile <profile> add git+https://github.com/yidian812-cyber/dsh-btw.git
+```
+
+装好后：新装 bundle 一般热生效；**换包（改名、升级）要完全退出并重开 DSH**——Host 半侧只在宿主启动时加载，前端模块刷新页面即可。
 
 ## 用法
 
